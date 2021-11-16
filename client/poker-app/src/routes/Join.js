@@ -33,7 +33,7 @@ const Join = () => {
             name="name"
             onChange={(e) => setUsername(e.target.value)}
             onKeyUp={handleKeyPress}
-            placeholder="Jane Doe"
+            placeholder="email"
             type="text"
             value={username}
           />

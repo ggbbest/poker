@@ -11,3 +11,4 @@ client/poker-app/public/images/cards/*
 *.code-workspace
 .vscode
 
+.env

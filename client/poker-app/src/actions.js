@@ -119,6 +119,12 @@ const sendSignal = (client, peerID, streamID, signalData) => {
 // Game
 
 const joinGame = (client, username) => {
+  // client.onopen = () =>  client.send(JSON.stringify({
+  //   action: Event.JOIN,
+  //   params: {
+  //     username,
+  //   },
+  // }))
   client.send(JSON.stringify({
     action: Event.JOIN,
     params: {
@@ -126,6 +132,9 @@ const joinGame = (client, username) => {
     },
   }))
 }
+
+
+
 
 const newMessage = (dispatch, params) => {
   dispatch({

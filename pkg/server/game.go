@@ -1,11 +1,16 @@
 package server
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/richard-to/go-poker/pkg/poker"
 )
 
@@ -846,4 +851,38 @@ func createMutedSeatMap(clients map[string]*Client) map[string]bool {
 		}
 	}
 	return mutedSeatMap
+}
+
+//#############################
+
+func checkError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func dbcall() {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	fmt.Println("env [HOST]:", os.Getenv("HOST"))
+
+	// let user_email = req.cookies.user_email;
+	var id, c4ei_addr, c4ei_balance string
+	db, err := sql.Open("mysql", ""+os.Getenv("DB_USER")+":"+os.Getenv("DB_PASS")+"@tcp("+os.Getenv("HOST")+":3306)/"+os.Getenv("DB_DATABASE")+"")
+	checkError(err)
+	defer db.Close()
+
+	fmt.Println("connect success")
+	rows, err := db.Query("SELECT id, c4ei_addr, c4ei_balance FROM user a WHERE a.email='?'", "his001_ccp@naver.com")
+	checkError(err)
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&id, &c4ei_addr, &c4ei_balance)
+		checkError(err)
+		fmt.Println("rows", id, c4ei_addr, c4ei_balance)
+	}
 }

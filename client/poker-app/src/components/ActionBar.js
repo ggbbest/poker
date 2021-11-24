@@ -94,12 +94,12 @@ const ActionBar = ({
   const raiseToAmount = callAmount + raiseByAmount
   const callRemaining = callAmount - chipsInPot
 
-  let callRemainingLabel = `ℝ${callRemaining}`
+  let callRemainingLabel = `🍺${callRemaining}`
   if (callRemaining >= totalChips) {
     callRemainingLabel = 'ALL IN'
   }
 
-  let raiseToAmountLabel = `ℝ${raiseToAmount}`
+  let raiseToAmountLabel = `🍺${raiseToAmount}`
   if (raiseByAmount === maxRaiseAmount || callRemaining + raiseByAmount > totalChips) {
     raiseToAmountLabel = 'ALL IN'
   }

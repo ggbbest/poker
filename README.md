@@ -30,10 +30,10 @@ PATH="$PATH"
 nvm install 16.13.0
 cd /home/dev/www/vpoker.c4ei.net/client/poker-app
 yarn start
-
+###################################################
 cd /home/dev/www/vpoker.c4ei.net/cmd/poker-app
 go run main.go
-
+###################################################
 
 /home/dev/www/vpoker.c4ei.net/client/poker-app/src/routes/Join.js
 
@@ -44,3 +44,36 @@ go get github.com/joho/godotenv
 
 /home/dev/www/vpoker.c4ei.net/pkg/server/.env
 /home/dev/www/vpoker.c4ei.net/pkg/server/game.go  --> func dbcall() {
+
+/home/dev/www/vpoker.c4ei.net/client/poker-app/src/routes/Join.js
+email login 
+
+/home/dev/www/vpoker.c4ei.net/pkg/server/game.go
+	// Link user with player seat
+	selectedPlayer.Name = c.username
+	selectedPlayer.Chips = defaultChips    --> 
+	selectedPlayer.Status = poker.PlayerSittingOut
+	selectedPlayer.IsHuman = true
+	c.seatID = selectedPlayer.ID
+
+
+// 1. int to string - 숫자(정수)를 문자열로 변환
+a := strconv.Itoa(100)
+fmt.Println("a: ", a)                      // a: 100
+fmt.Println("type a: ", reflect.TypeOf(a)) // type a: string
+
+// 1-1. int to string - 100을 10진수 문자열로 변환
+aa := strconv.FormatInt(100, 10)
+fmt.Println("aa: ", aa)                      // aa: 100
+fmt.Println("type aa: ", reflect.TypeOf(aa)) // type aa: string
+
+// 2. string to int - 문자열을 숫자(정수) 변환
+b, _ := strconv.Atoi("100")
+fmt.Println("b: ", b)                      // b:  100
+fmt.Println("type b: ", reflect.TypeOf(b)) // type b: int
+
+bb, _ := strconv.ParseInt("100", 10, 64)
+fmt.Println("bb: ", bb)                      // bb: 100
+fmt.Println("type bb: ", reflect.TypeOf(bb)) // type bb: int64
+
+ℝ --> 🍺

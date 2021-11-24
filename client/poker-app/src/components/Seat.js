@@ -207,7 +207,7 @@ const getPlayerStatusMessage = (player) => {
   } else if (player.chips === 0) {
     return 'All In'
   }
-  return `ℝ${player.chips}`
+  return `🍺${player.chips}`
 }
 
 const Seat = ({
@@ -279,7 +279,7 @@ const Seat = ({
     <div className={getWrapCss(location)}>
       <div className="flex justify-center mb-2">
         <div className={getDealerCss(player)}>D</div>
-        {player.chipsInPot > 0 && <div className={actionCss}>ℝ{player.chipsInPot}</div>}
+        {player.chipsInPot > 0 && <div className={actionCss}>🍺{player.chipsInPot}</div>}
       </div>
       <div className="flex">
           <div className="w-7/12">

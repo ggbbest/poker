@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -239,9 +240,11 @@ func HandleTakeSeat(c *Client, seatID string) error {
 		return fmt.Errorf("Invalid seat chosen")
 	}
 
+	dp := getUserBalanceByEmail(c.username)
 	// Link user with player seat
 	selectedPlayer.Name = c.username
-	selectedPlayer.Chips = defaultChips
+	// selectedPlayer.Chips = defaultChips
+	selectedPlayer.Chips = dp.Db_POT
 	selectedPlayer.Status = poker.PlayerSittingOut
 	selectedPlayer.IsHuman = true
 	c.seatID = selectedPlayer.ID
@@ -314,7 +317,7 @@ func HandleRaise(c *Client, raiseAmount int) error {
 
 	c.hub.broadcast <- NewBroadcastEvent(createNewMessageEvent(
 		systemUsername,
-		fmt.Sprintf("%s %s ℝ%d.", c.gameState.CurrentSeat.Player.Name, actionLabel, raiseAmount),
+		fmt.Sprintf("%s %s 🍺%d.", c.gameState.CurrentSeat.Player.Name, actionLabel, raiseAmount),
 	))
 	return GoToNextGameState(c)
 }
@@ -488,7 +491,7 @@ func DetermineWinners(c *Client) {
 			c.hub.broadcast <- NewBroadcastEvent(createNewMessageEvent(
 				systemUsername,
 				fmt.Sprintf(
-					"%s wins ℝ%d %s with %s.",
+					"%s wins 🍺%d %s with %s.",
 					ph.Player.Name,
 					ph.ChipsWon,
 					potText,
@@ -739,6 +742,13 @@ func createUpdateGameEvent(c *Client, showCards bool) Event {
 			holeCards := [2]*poker.Card{}
 			if showCards && seats.Player.HasFolded == false {
 				holeCards = seats.Player.HoleCards
+
+				if holeCards[0] == nil || holeCards[1] == nil {
+				} else {
+					setgameLogByEmail(seats.Player.Chips, g.BettingRound.Bets[seats.Player.ID], strconv.FormatBool(seats.Player.HasFolded),
+						string(holeCards[0].Symbol()), string(holeCards[1].Symbol()),
+						seats.Player.ID, activePlayer.ID, g.Table.Dealer.Player.ID, seats.Player.Name, seats.Player.Status.String())
+				}
 			}
 			players = append(players, map[string]interface{}{
 				"chips":      seats.Player.Chips,
@@ -752,6 +762,9 @@ func createUpdateGameEvent(c *Client, showCards bool) Event {
 				"name":       seats.Player.Name,
 				"status":     seats.Player.Status.String(),
 			})
+			// setUserBalanceByEmail(username string, chgPOT string) (cnt int64) {
+			setUserBalanceByEmail(seats.Player.Name, seats.Player.Chips)
+
 			seats = seats.Next()
 		}
 
@@ -854,35 +867,101 @@ func createMutedSeatMap(clients map[string]*Client) map[string]bool {
 }
 
 //#############################
-
+//#############################
+//#############################
 func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func dbcall() {
+type dbPlayer struct {
+	Db_Id           int
+	Db_email        string
+	Db_c4ei_addr    string
+	Db_c4ei_balance string
+	Db_POT          int
+}
 
+func getDBconnStr() (constr string) {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	fmt.Println("env [HOST]:", os.Getenv("HOST"))
+	// fmt.Println("env [HOST]:", os.Getenv("HOST"))
+	// fmt.Println("username:", username)
+	return os.Getenv("DB_USER") + ":" + os.Getenv("DB_PASS") + "@tcp(" + os.Getenv("HOST") + ":3306)/" + os.Getenv("DB_DATABASE")
+}
 
-	// let user_email = req.cookies.user_email;
-	var id, c4ei_addr, c4ei_balance string
-	db, err := sql.Open("mysql", ""+os.Getenv("DB_USER")+":"+os.Getenv("DB_PASS")+"@tcp("+os.Getenv("HOST")+":3306)/"+os.Getenv("DB_DATABASE")+"")
+func setgameLogByEmail(chips int, chipsInPot int, hasFolded string, holeCards1 string, holeCards2 string,
+	id string, isActive string, isDealer string, name string, status string) (cnt int64) {
+	var constr = getDBconnStr()
+	conn, err := sql.Open("mysql", constr)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	var strsql = "insert into gamelog (chips, chipsInPot, hasFolded, holeCards1, holeCards2, id, isActive, isDealer, name, status) values ('" + strconv.Itoa(int(chips)) + "','" + strconv.Itoa(int(chipsInPot)) + "','" + hasFolded + "','" + holeCards1 + "','" + holeCards2 + "','" + id + "','" + isActive + "','" + isDealer + "','" + name + "','" + status + "')"
+	// log.Printf("strsql: %v", strsql)
+	result, err := conn.Exec(strsql)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	nRow, err := result.RowsAffected() //RowsAffected() 함수를 통해 update 한 갯수를 확인한다.
+	// fmt.Println("update count : ", nRow +" / username : " )
+	// fmt.Sprintf("username : %s update count : %d.", username, nRow)
+	conn.Close()
+	return nRow
+}
+func setUserBalanceByEmail(username string, chgPOT int) (cnt int64) {
+	var constr = getDBconnStr()
+	conn, err := sql.Open("mysql", constr)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	result, err := conn.Exec("update user set pot=" + strconv.Itoa(int(chgPOT)) + ", last_reg=now() where email='" + username + "' ")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	nRow, err := result.RowsAffected() //RowsAffected() 함수를 통해 update 한 갯수를 확인한다.
+	// fmt.Println("update count : ", nRow +" / username : " )
+	fmt.Sprintf("username : %s update count : %d.", username, nRow)
+	conn.Close()
+	return nRow
+}
+
+func getUserBalanceByEmail(username string) (dp dbPlayer) {
+
+	var constr = getDBconnStr()
+	db, err := sql.Open("mysql", constr)
 	checkError(err)
 	defer db.Close()
 
-	fmt.Println("connect success")
-	rows, err := db.Query("SELECT id, c4ei_addr, c4ei_balance FROM user a WHERE a.email='?'", "his001_ccp@naver.com")
+	// fmt.Println("connect success")
+	var _id, _pot int
+	var _email, _c4ei_addr, _c4ei_balance string
+	rows, err := db.Query("SELECT id, email, c4ei_addr, c4ei_balance, pot FROM user a WHERE a.email='" + username + "'")
 	checkError(err)
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&id, &c4ei_addr, &c4ei_balance)
+		err := rows.Scan(&_id, &_email, &_c4ei_addr, &_c4ei_balance, &_pot)
 		checkError(err)
-		fmt.Println("rows", id, c4ei_addr, c4ei_balance)
+		dp.Db_Id = _id
+		dp.Db_email = _email
+		dp.Db_c4ei_addr = _c4ei_addr
+		dp.Db_c4ei_balance = _c4ei_balance
+		dp.Db_POT = _pot
+
+		log.Println(dp.Db_POT)
+		// fmt.Println("rows", _pot)
 	}
+	return dp
 }
+
+//#############################
+//#############################
+//#############################

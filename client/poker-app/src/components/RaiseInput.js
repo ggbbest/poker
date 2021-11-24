@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import Autosuggest from 'react-autosuggest'
 
 const renderSuggestion = suggestion => (
-  <div>{suggestion.label} <em className="text-gray-400"> - ℝ{suggestion.value}</em></div>
+  <div>{suggestion.label} <em className="text-gray-400"> - 🍺{suggestion.value}</em></div>
 )
 
 const RaiseInput = ({

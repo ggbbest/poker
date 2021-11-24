@@ -23,7 +23,7 @@ const cssInfo = classNames(
 
 const Pot = ({amount}) => (
   <div className="flex justify-center">
-    <div className={cssInfo}>Main Pot ℝ{amount}</div>
+    <div className={cssInfo}>Main Pot 🍺{amount}</div>
   </div>
 )
 

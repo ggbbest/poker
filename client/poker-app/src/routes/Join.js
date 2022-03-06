@@ -25,6 +25,8 @@ const current = decodeURI(window.location.href)
 const search = current.split("?")[1]
 const params = new URLSearchParams(search)
 const email = params.get('email')
+const room = params.get('room')
+// const { body: { email, sec2 }, } = req
 
 const hstyle = {
   display: "none"
@@ -38,9 +40,13 @@ window.onload = function() {
 function jsfn_btnGo(){
   // alert(current + "/"+search + "/"+params + "/"+email)
   // alert(email)
+  
   if(email==""||email==null){
-    alert("c4ei.net 에서 로그인 후 접속 부탁드립니다.")
-    document.location.href="https://c4ei.net"
+    // let _email = req.body.email;
+    // if(_email==""||_email==null){
+      alert("c4ei.net 에서 로그인 후 접속 부탁드립니다.")
+      document.location.href="https://c4ei.net"        
+    // }
   }else{
     handleJoinGame(email)
   }

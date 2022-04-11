@@ -8,14 +8,14 @@ import {injected} from './lib/connectors'
 const Join = () => {
   const ws = useContext(WebSocketContext)
   const [isJoining, setJoining] = useState(false)
-  const [username, setUsername] = useState('')
-  const [roomId, setRoomid] = useState('')
+  // const [username, setUsername] = useState('')
+  // const [roomId, setRoomid] = useState('')
   ///////////////////// metamask s ////////////////
   const { chainId, account, active, activate, deactivate } = useWeb3React()
   const handleConnect = () => {
     if(active) { 
-      // document.getElementById('user_address').value = {chainId}
       deactivate()
+      handleJoinGame(account) // join game
       return
     }
     activate(injected,(error)=>{
@@ -27,25 +27,25 @@ const Join = () => {
   ///////////////////// metamask e ////////////////
   
   ////////////////////////////////////////////////////////////////////////
-  const current = decodeURI(window.location.href)
-  const search = current.split("?")[1]
-  const params = new URLSearchParams(search)
-  // const c4ei_Address = params.get('c4ei_Address')
-  let reqroomid = params.get('room')
+  // const current = decodeURI(window.location.href)
+  // const search = current.split("?")[1]
+  // const params = new URLSearchParams(search)
+  // let reqroomid = params.get('room')
   // const { body: { c4ei_Address, sec2 }, } = req
   const hstyle = { display: "block" /* display: "block" */ }
 
-  const handleJoinGame = (username) => {
-    const trimmedUsername = username.trim()
+  const handleJoinGame = (account) => {
+    // console.log("##### /src/routes/Join.js ##### : handleJoinGame 1")
+    const trimmedUsername = account.trim()
+    // console.log("##### /src/routes/Join.js ##### : handleJoinGame 2")
     if (trimmedUsername) {
       setJoining(true)
-      if(reqroomid==""||reqroomid==null)
-      {
-        reqroomid=1
-      } 
-      setRoomid(reqroomid)
-      console.log(roomId+":roomId")
-      ws.joinGame(username)
+      // console.log("##### /src/routes/Join.js ##### : handleJoinGame 3")
+      // if(reqroomid==""||reqroomid==null) { reqroomid=1 } 
+      // setRoomid(reqroomid)
+      // console.log("##### /src/routes/Join.js #####"+roomId+":roomId")
+      // console.log("##### /src/routes/Join.js ##### : handleJoinGame 4")
+      ws.joinGame(account)
       // ws.joinGame(username , roomId) //220411
       // ws.joinGame2(roomId, username)
     }
@@ -83,9 +83,7 @@ const Join = () => {
             <button type="button" onClick={handleConnect} className="border rounded-sm mr-2 p-3">
               {active?'disconnect':'connect'}
             </button>
-          </div>
-
-          <div>
+            <br/>
             <p>Account: {account}</p>
             <p>ChainId: {chainId}</p>
           </div>
@@ -94,9 +92,9 @@ const Join = () => {
           <input
             autoFocus
             className="border rounded-sm mr-2 p-3"
-            id="user_address"
             name="name"
-            onChange={(e) => setUsername(e.target.value)}
+            // onChange={(e) => setUsername(e.target.value)}
+            onChange={() => handleJoinGame(account)}
             onKeyUp={handleKeyPress}
             placeholder="c4ei_Address"
             type="text"
@@ -107,7 +105,7 @@ const Join = () => {
           <button id="btnGo"
             className="bg-blue-700 px-6 py-3 font-bold text-white"
             disabled={isJoining}
-            onClick={() => handleJoinGame(username)}
+            onClick={() => handleJoinGame(account)}
           >
             Join
           </button>

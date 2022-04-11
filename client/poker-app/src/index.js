@@ -19,13 +19,13 @@ function getLibrary(provider) {
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppStateProvider>
-      <WebSocketProvider>
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <App />
-        </Web3ReactProvider>
-      </WebSocketProvider>
-    </AppStateProvider>
+      <AppStateProvider>
+          <WebSocketProvider>
+            <Web3ReactProvider getLibrary={getLibrary}>
+              <App />
+            </Web3ReactProvider>
+          </WebSocketProvider>
+      </AppStateProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

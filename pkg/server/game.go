@@ -40,6 +40,7 @@ const actionRaise string = "raise"
 const actionUpdateGame string = "update-game"
 
 // Table settings
+const roomId int = 1
 const defaultChips int = 100
 const defaultMinBet int = 2
 const minPlayers int = 2
@@ -676,6 +677,18 @@ func createOnJoinEvent(userID string, username string) Event {
 	}
 }
 
+// //roomID add
+// func createOnJoinEvent2(roomID string,userID string, username string) Event {
+// 	return Event{
+// 		Action: actionOnJoin,
+// 		Params: map[string]interface{}{
+// 			"roomID":   roomID,
+// 			"userID":   userID,
+// 			"username": username,
+// 		},
+// 	}
+// }
+
 func createOnTakeSeatEvent(seatID string, clientSeatMap map[string]string) Event {
 	return Event{
 		Action: actionOnTakeSeat,
@@ -921,7 +934,7 @@ func setUserBalanceByEmail(username string, chgPOT int) (cnt int64) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	result, err := conn.Exec("update user set pot=" + strconv.Itoa(int(chgPOT)) + ", last_reg=now() where email='" + username + "' ")
+	result, err := conn.Exec("update game_user set pot=" + strconv.Itoa(int(chgPOT)) + ", last_reg=now() where c4ei_addr='" + username + "' ")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -942,16 +955,16 @@ func getUserBalanceByEmail(username string) (dp dbPlayer) {
 
 	// fmt.Println("connect success")
 	var _id, _pot int
-	var _email, _c4ei_addr, _c4ei_balance string
-	rows, err := db.Query("SELECT id, email, c4ei_addr, c4ei_balance, pot FROM user a WHERE a.email='" + username + "'")
+	var _c4ei_addr, _c4ei_balance string //_email,
+	rows, err := db.Query("SELECT id, c4ei_addr, c4ei_balance, pot FROM game_user a WHERE a.c4ei_addr='" + username + "'")
 	checkError(err)
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&_id, &_email, &_c4ei_addr, &_c4ei_balance, &_pot)
+		err := rows.Scan(&_id, &_c4ei_addr, &_c4ei_balance, &_pot)
 		checkError(err)
 		dp.Db_Id = _id
-		dp.Db_email = _email
+		// dp.Db_email = _email
 		dp.Db_c4ei_addr = _c4ei_addr
 		dp.Db_c4ei_balance = _c4ei_balance
 		dp.Db_POT = _pot

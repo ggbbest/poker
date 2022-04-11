@@ -7,12 +7,23 @@ import App from './App'
 import { AppStateProvider } from './appStore'
 import reportWebVitals from './reportWebVitals'
 import { WebSocketProvider } from './WebSocket'
+//################# 22-04-11 #################
+// yarn add @web3-react/core @ethersproject/providers
+// yarn add @web3-react/injected-connector
+import { Web3ReactProvider } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers"
+function getLibrary(provider) {
+  const library = new Web3Provider(provider, "any")
+  return library
+}
 
 ReactDOM.render(
   <React.StrictMode>
     <AppStateProvider>
       <WebSocketProvider>
-        <App />
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <App />
+        </Web3ReactProvider>
       </WebSocketProvider>
     </AppStateProvider>
   </React.StrictMode>,

@@ -23,22 +23,21 @@ const DEFAULT_CARD_DELAY = [
 
 const getStream = (userID, player, streamSeatMap, streams, userStream) => {
   const peerID = streamSeatMap[player.id]
-
-  if (!peerID) {
-    return null
-  }
-
-  if (userID === peerID) {
-    return userStream
-  }
-
+  if (!peerID) { return null }
+  if (userID === peerID) { return userStream }
   const stream = find(streams, s => !s.streamID.startsWith(userID) && s.peerID === peerID)
-  if (stream) {
-    return stream.stream
-  }
-
+  if (stream) { return stream.stream }
   return null
 }
+// //roomID add
+// const getStream2 = (roomID, userID, player, streamSeatMap, streams, userStream) => {
+//   const peerID = streamSeatMap[player.id]
+//   if (!peerID) { return null }
+//   if (userID === peerID) { return userStream }
+//   const stream = find(streams, s => !s.streamID.startsWith(userID) && s.peerID === peerID)
+//   if (stream) { return stream.stream }
+//   return null
+// }
 
 const Game = () => {
   const ws = useContext(WebSocketContext)

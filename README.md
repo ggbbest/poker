@@ -46,7 +46,7 @@ go get github.com/joho/godotenv
 /home/dev/www/vpoker.c4ei.net/pkg/server/game.go  --> func dbcall() {
 
 /home/dev/www/vpoker.c4ei.net/client/poker-app/src/routes/Join.js
-email login 
+c4ei_Address login 
 
 /home/dev/www/vpoker.c4ei.net/pkg/server/game.go
 	// Link user with player seat
@@ -80,3 +80,7 @@ fmt.Println("type bb: ", reflect.TypeOf(bb)) // type bb: int64
 
 https://github.com/ggbbest/poker
 room param add - 220306
+
+
+--
+const joinGame = (client, username, roomid ) => {

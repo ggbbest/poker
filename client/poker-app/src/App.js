@@ -4,7 +4,6 @@ import { appStore } from './appStore'
 import Game from './routes/Game'
 import Join from './routes/Join'
 
-
 function App() {
   const appContext = useContext(appStore)
   const { appState } = appContext

@@ -64,13 +64,9 @@ const initPeer = (dispatch, ws, initiator, stream, peerID, streamID) => {
 
 
 const updatePeers = (dispatch, ws, clientSeatMap, userID, seatID, userStream, streams) => {
-  if (!seatID || !userStream) {
-    return
-  }
+  if (!seatID || !userStream) { return }
   keys(clientSeatMap).forEach(clientID => {
-    if (clientID === userID) {
-      return
-    }
+    if (clientID === userID) { return }
     const stream = find(streams, s => s.streamID.startsWith(userID) && s.peerID === clientID)
     if (!stream) {
       const streamID = `${userID}-${uuidv4()}`
@@ -119,6 +115,7 @@ const sendSignal = (client, peerID, streamID, signalData) => {
 // Game
 
 const joinGame = (client, username) => {
+// const joinGame = (client, username, roomid ) => { //220411
   // client.onopen = () =>  client.send(JSON.stringify({
   //   action: Event.JOIN,
   //   params: {
@@ -129,12 +126,10 @@ const joinGame = (client, username) => {
     action: Event.JOIN,
     params: {
       username,
+      // roomid, //220411
     },
   }))
 }
-
-
-
 
 const newMessage = (dispatch, params) => {
   dispatch({

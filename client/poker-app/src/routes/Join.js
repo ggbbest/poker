@@ -19,7 +19,7 @@ const Join = () => {
       return
     }
     activate(injected,(error)=>{
-      if('/No Ethereum provider was found on window.ethereum/'.test(error)){
+      if('No Ethereum provider was found on window.ethereum'.test(error)){
         window.open('https://metamask.io/download.html')
       }
     })
@@ -36,6 +36,10 @@ const Join = () => {
 
   const handleJoinGame = (account) => {
     // console.log("##### /src/routes/Join.js ##### : handleJoinGame 1")
+    if(account===undefined||account===""||account===null){
+      alert("Metamask 로그인 후 접속 부탁드립니다.")
+      return
+    }
     const trimmedUsername = account.trim()
     // console.log("##### /src/routes/Join.js ##### : handleJoinGame 2")
     if (trimmedUsername) {
@@ -51,11 +55,12 @@ const Join = () => {
     }
   }
 
-  const handleKeyPress = (e) => {
-    if (e.code === 'Enter') {
-      handleJoinGame(e.target.value)
-    }
-  }
+  // const handleKeyPress = (e) => {
+  //   if (e.code === 'Enter') {
+  //     // handleJoinGame(e.target.value)
+  //     handleJoinGame(account)
+  //   }
+  // }
 
   // window.onload = function() { setTimeout(() => { jsfn_btnGo() }, 900) }
   // function jsfn_btnGo(){
@@ -80,8 +85,8 @@ const Join = () => {
       <div className="flex h-screen">
         <div className="border shadow-lg m-auto p-10 font-bold text-black">
           <div>
-            <button type="button" onClick={handleConnect} className="border rounded-sm mr-2 p-3">
-              {active?'disconnect':'connect'}
+            <button type="button" onClick={handleConnect} className="bg-blue-700 px-6 py-3 font-bold text-white">
+              {active?'disconnect':'①connect'}
             </button>
             <br/>
             <p>Account: {account}</p>
@@ -90,24 +95,24 @@ const Join = () => {
 
           <label className="sr-only" htmlFor="name">Name</label>
           <input
-            autoFocus
+            // autoFocus
             className="border rounded-sm mr-2 p-3"
             name="name"
             // onChange={(e) => setUsername(e.target.value)}
-            onChange={() => handleJoinGame(account)}
-            onKeyUp={handleKeyPress}
-            placeholder="c4ei_Address"
+            // onChange={() => handleJoinGame(account)}
+            // onKeyUp={handleKeyPress}
+            placeholder="login metamask button click first!"
             type="text"
             value={account}
             // value={username}
-            // readOnly
+            readOnly = {true}
           />
           <button id="btnGo"
             className="bg-blue-700 px-6 py-3 font-bold text-white"
             disabled={isJoining}
             onClick={() => handleJoinGame(account)}
           >
-            Join
+            ②Join
           </button>
 	      </div>
       </div>
